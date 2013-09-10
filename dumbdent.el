@@ -35,6 +35,7 @@ NUM is the number of spaces."
 (defun dumbdedent-this-line ()
   "Do dumbdedent to the current line."
 
+  (interactive)
   (let ((pos (point))
          (num (default-value 'tab-width)))
     (beginning-of-line)
@@ -47,6 +48,7 @@ NUM is the number of spaces."
 HERE is somewhere on the first line to modify.
 END is somewhere on the last line to modify."
 
+  (interactive)
   (let ((end (region-end)))
     (while (< (point) end)
       (beginning-of-line)
@@ -57,11 +59,9 @@ END is somewhere on the last line to modify."
 (defun dumbdent-line-or-region ()
   "Do dumbdent-line or dumbdent-region, depending."
 
-  (interactive "r")
+  (interactive)
   (if (use-region-p)
-      ;; (insert "region")
       (dumbdent-region (point) (region-end))
-    ;;(insert "line")))
     (dumbdent-this-line)))
 
 
