@@ -1,11 +1,7 @@
-;;; package --- Summary
+;;; dumbdent.el --- A pretty dumb way of indenting
 ;;;
-;;; A dumb way to indent
-
-;;; Commentary:
+;;; Copyright © 2013 Evan Bender
 ;;;
-;;; A vim-like indent.
-
 ;;; Code:
 (defun dumbdent (num)
   "Stick some spaces at the head of the line.
@@ -18,7 +14,11 @@ NUM is the number of spaces."
   "Chop some spaces off the head of the line.
 NUM is the number of spaces."
 
-  (delete-forward-char num))
+  (let ((spaces num))
+    (while (and (> spaces 0)
+                (eq (char-after) ?\s))
+      (delete-forward-char 1)
+      (setq spaces (1- spaces)))))
 
 
 (defun dumbdent-this-line ()
@@ -54,6 +54,16 @@ END is somewhere on the last line to modify."
       (beginning-of-line)
       (dumbdent (default-value 'tab-width))
       (forward-line))))
+
+
+;; (defun dumbdedent-region (here end)
+;;   (interactive)
+;;   (while (< (point) (region-end))
+;;     (beginning-of-line)
+;;     (dumbdedent (default-value 'tab-width))
+;;     (forward-line)))
+
+;; todo: generalize this line-wise function
 
 
 (defun dumbdent-line-or-region ()
