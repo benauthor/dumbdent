@@ -5,14 +5,14 @@
 ;;; Code:
 (defun dumbdent (num)
   "Stick some spaces at the head of the line.
-NUM is the number of spaces."
+   NUM is the number of spaces to add."
 
   (insert-char ?\s num))
 
 
 (defun dumbdedent (num)
   "Chop some spaces off the head of the line.
-NUM is the number of spaces."
+   NUM is the maximum number of spaces to remove."
 
   (let ((spaces num))
     (while (and (> spaces 0)
@@ -29,7 +29,7 @@ NUM is the number of spaces."
         (num (default-value 'tab-width)))
     (beginning-of-line)
     (dumbdent num)
-    (goto-char (+ pos num))))
+    (back-to-indentation)))
 
 
 (defun dumbdedent-this-line ()
@@ -40,30 +40,29 @@ NUM is the number of spaces."
          (num (default-value 'tab-width)))
     (beginning-of-line)
     (dumbdedent num)
-        (goto-char (- pos num))))
+    (back-to-indentation)))
 
 
-(defun dumbdent-region (here end)
+(defun dumbdent-region ()
   "Do dumbdent to each line in the region.
-HERE is somewhere on the first line to modify.
-END is somewhere on the last line to modify."
+   HERE is somewhere on the first line to modify.
+   END is somewhere on the last line to modify."
 
   (interactive)
-  (let ((end (region-end)))
-    (while (< (point) end)
-      (beginning-of-line)
-      (dumbdent (default-value 'tab-width))
-      (forward-line))))
+  (while (< (point) (region-end))
+    (beginning-of-line)
+    (dumbdent (default-value 'tab-width))
+    (forward-line)))
 
 
-;; (defun dumbdedent-region (here end)
+;; (defun dumbdedent-region ()
+;;   "Do dumbdedent to each line in the region."
+
 ;;   (interactive)
 ;;   (while (< (point) (region-end))
 ;;     (beginning-of-line)
 ;;     (dumbdedent (default-value 'tab-width))
 ;;     (forward-line)))
-
-;; todo: generalize this line-wise function
 
 
 (defun dumbdent-line-or-region ()
@@ -71,8 +70,16 @@ END is somewhere on the last line to modify."
 
   (interactive)
   (if (use-region-p)
-      (dumbdent-region (point) (region-end))
+      (dumbdent-region)
     (dumbdent-this-line)))
+
+;; (defun dumbdedent-line-or-region ()
+;;   "Do dumbdedent-line or dumbdedent-region, depending."
+
+;;   (interactive)
+;;   (if (use-region-p)
+;;       (dumbdedent-region)
+;;     (dumbdedent-this-line)))
 
 
 ;; (very-evil-map [C-tab] 'dumbdent-this-line)
