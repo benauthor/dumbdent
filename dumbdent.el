@@ -4,28 +4,27 @@
 ;;;
 ;;; Code:
 (defun dumbdent-this-line ()
-  "Do dumbdent to the current line."
+  "Indent current line."
 
   (interactive)
-  (let ((bounds (bounds-of-thing-at-point 'line))
-        (num (default-value 'tab-width)))
-    (indent-rigidly (car bounds) (cdr bounds) num)
+  (let ((num (default-value 'tab-width)))
+    (indent-rigidly (line-beginning-position) (line-end-position) num)
     (back-to-indentation)))
 
 
 (defun dumbdedent-this-line ()
-  "Do dumbdedent to the current line."
+  "Dedent the current line."
 
   (interactive)
-  (let ((bounds (bounds-of-thing-at-point 'line))
-        (num (default-value 'tab-width)))
-    (indent-rigidly (car bounds) (cdr bounds) (- num))
+  (let ((num (default-value 'tab-width)))
+    (indent-rigidly (line-beginning-position) (line-end-position) (- num))
     (back-to-indentation)))
 
 
 (defun dumbdent-region ()
-  "Do dumbdent to each line in the region.
-               So far the mark-point behavior is a little odd."
+  "Indent each line in the region.
+   So far the mark-point behavior is a little odd: we lose highlight
+   when selecting in one direction, but not the other. wtf."
 
   (interactive)
   (if (< (mark) (point))
@@ -41,7 +40,7 @@
 
 
 (defun dumbdedent-region ()
-  "Do dumbdedent to each line in the region."
+  "Dedent each line in the region."
 
   (interactive)
   (if (< (mark) (point))
@@ -53,7 +52,6 @@
     ))
 
 
-
 (defun dumbdent-line-or-region ()
   "Do dumbdent-region if in transient mark mode and there is an active region,
    otherwise just dumbdent-line."
@@ -62,6 +60,7 @@
   (if (use-region-p)
       (dumbdent-region)
     (dumbdent-this-line)))
+
 
 (defun dumbdedent-line-or-region ()
   "Do dumbdedent-line or dumbdedent-region, depending."
@@ -72,8 +71,8 @@
     (dumbdedent-this-line)))
 
 
-;; (very-evil-map [C-tab] 'dumbdent-this-line)
-;; (very-evil-map [S-tab] 'dumbdedent-this-line)
+;; (very-evil-map [C-tab] 'dumbdent-line-or-region)
+;; (very-evil-map [S-tab] 'dumbdedent-line-or-region)
 
 (provide 'dumbdent)
 ;;; dumbdent.el ends here
