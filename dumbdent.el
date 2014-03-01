@@ -3,32 +3,13 @@
 ;;; Copyright © 2013 Evan Bender
 ;;;
 ;;; Code:
-(defun dumbdent (num)
-  "Stick some spaces at the head of the line.
-   NUM is the number of spaces to add."
-
-  (insert-char ?\s num))
-
-
-(defun dumbdedent (num)
-  "Chop some spaces off the head of the line.
-   NUM is the maximum number of spaces to remove."
-
-  (let ((spaces num))
-    (while (and (> spaces 0)
-                (eq (char-after) ?\s))
-      (delete-forward-char 1)
-      (setq spaces (1- spaces)))))
-
-
 (defun dumbdent-this-line ()
   "Do dumbdent to the current line."
 
   (interactive)
-  (let ((pos (point))
+  (let ((bounds (bounds-of-thing-at-point 'line))
         (num (default-value 'tab-width)))
-    (beginning-of-line)
-    (dumbdent num)
+    (indent-rigidly (car bounds) (cdr bounds) num)
     (back-to-indentation)))
 
 
@@ -36,16 +17,15 @@
   "Do dumbdedent to the current line."
 
   (interactive)
-  (let ((pos (point))
+  (let ((bounds (bounds-of-thing-at-point 'line))
         (num (default-value 'tab-width)))
-    (beginning-of-line)
-    (dumbdedent num)
+    (indent-rigidly (car bounds) (cdr bounds) (- num))
     (back-to-indentation)))
 
 
 (defun dumbdent-region ()
   "Do dumbdent to each line in the region.
-   So far the mark-point behavior is a little odd."
+               So far the mark-point behavior is a little odd."
 
   (interactive)
   (if (< (mark) (point))
@@ -55,7 +35,6 @@
     (indent-rigidly (point) (mark) (default-value 'tab-width))
     ;; this is goofy and I am clearly missing something about how transient-mark-mode works
     (exchange-point-and-mark)
-    ;;(exchange-point-and-mark)
     ;; would rather something simple and to the point *NO PUN INTENDED* like
     ;; (activate-mark)
     ))
