@@ -37,7 +37,7 @@
 
   (interactive)
   (let ((pos (point))
-         (num (default-value 'tab-width)))
+        (num (default-value 'tab-width)))
     (beginning-of-line)
     (dumbdedent num)
     (back-to-indentation)))
@@ -45,41 +45,52 @@
 
 (defun dumbdent-region ()
   "Do dumbdent to each line in the region.
-   HERE is somewhere on the first line to modify.
-   END is somewhere on the last line to modify."
+   So far the mark-point behavior is a little odd."
 
   (interactive)
-  (while (< (point) (region-end))
+  (if (< (mark) (point))
+      (exchange-point-and-mark))
+  (save-excursion
     (beginning-of-line)
-    (dumbdent (default-value 'tab-width))
-    (forward-line)))
+    (indent-rigidly (point) (mark) (default-value 'tab-width))
+    ;; this is goofy and I am clearly missing something about how transient-mark-mode works
+    (exchange-point-and-mark)
+    ;;(exchange-point-and-mark)
+    ;; would rather something simple and to the point *NO PUN INTENDED* like
+    ;; (activate-mark)
+    ))
 
 
-;; (defun dumbdedent-region ()
-;;   "Do dumbdedent to each line in the region."
+(defun dumbdedent-region ()
+  "Do dumbdedent to each line in the region."
 
-;;   (interactive)
-;;   (while (< (point) (region-end))
-;;     (beginning-of-line)
-;;     (dumbdedent (default-value 'tab-width))
-;;     (forward-line)))
+  (interactive)
+  (if (< (mark) (point))
+      (exchange-point-and-mark))
+  (save-excursion
+    (beginning-of-line)
+    (indent-rigidly (point) (mark) (- (default-value 'tab-width)))
+    (exchange-point-and-mark)
+    ))
+
 
 
 (defun dumbdent-line-or-region ()
-  "Do dumbdent-line or dumbdent-region, depending."
+  "Do dumbdent-region if in transient mark mode and there is an active region,
+   otherwise just dumbdent-line."
 
   (interactive)
   (if (use-region-p)
       (dumbdent-region)
     (dumbdent-this-line)))
 
-;; (defun dumbdedent-line-or-region ()
-;;   "Do dumbdedent-line or dumbdedent-region, depending."
+(defun dumbdedent-line-or-region ()
+  "Do dumbdedent-line or dumbdedent-region, depending."
 
-;;   (interactive)
-;;   (if (use-region-p)
-;;       (dumbdedent-region)
-;;     (dumbdedent-this-line)))
+  (interactive)
+  (if (use-region-p)
+      (dumbdedent-region)
+    (dumbdedent-this-line)))
 
 
 ;; (very-evil-map [C-tab] 'dumbdent-this-line)
