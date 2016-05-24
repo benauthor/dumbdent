@@ -7,18 +7,16 @@
   "Indent current line."
 
   (interactive)
-  (let ((num (default-value 'tab-width)))
-    (indent-rigidly (line-beginning-position) (line-end-position) num)
-    (back-to-indentation)))
+  (indent-rigidly (line-beginning-position) (line-end-position) tab-width)
+  (back-to-indentation))
 
 
 (defun dumbdedent-this-line ()
   "Dedent the current line."
 
   (interactive)
-  (let ((num (default-value 'tab-width)))
-    (indent-rigidly (line-beginning-position) (line-end-position) (- num))
-    (back-to-indentation)))
+  (indent-rigidly (line-beginning-position) (line-end-position) (- tab-width))
+  (back-to-indentation))
 
 
 (defun dumbdent-region ()
@@ -31,7 +29,7 @@
       (exchange-point-and-mark))
   (save-excursion
     (beginning-of-line)
-    (indent-rigidly (point) (mark) (default-value 'tab-width))
+    (indent-rigidly (point) (mark) tab-width)
     ;; this is goofy and I am clearly missing something about how transient-mark-mode works
     (exchange-point-and-mark)
     ;; would rather something simple and to the point *NO PUN INTENDED* like
@@ -47,7 +45,7 @@
       (exchange-point-and-mark))
   (save-excursion
     (beginning-of-line)
-    (indent-rigidly (point) (mark) (- (default-value 'tab-width)))
+    (indent-rigidly (point) (mark) (-  tab-width))
     (exchange-point-and-mark)
     ))
 
